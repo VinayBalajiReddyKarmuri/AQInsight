@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AQI Prediction Results - Smarter Skies</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: url('{{ url_for('static', filename='images/hello.jpg') }}') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        .button {
+            display: inline-block;
+            margin: 20px;
+            padding: 12px 25px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .button:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-3px);
+            border: 2px solid #0072ff;
+        }
+    </style>
+
+    <script type="text/javascript">
+        google.charts.load('current', {packages: ['gauge']});
+        google.charts.setOnLoadCallback(drawGauge);
+
+        function drawGauge() {
+            var data = google.visualization.arrayToDataTable([
+                ['Label', 'Value'],
+                ['AQI', {{ predicted_aqi }}]  // Inject AQI value from Flask
+            ]);
+
+            var options = {
+                width: 400, height: 300,
+                redFrom: 201, redTo: 500,
+                yellowFrom: 51, yellowTo: 100,
+                greenFrom: 0, greenTo: 50,
+                minorTicks: 5,
+                max: 500
+            };
+
+            var chart = new google.visualization.Gauge(document.getElementById('gauge_chart'));
+            chart.draw(data, options);
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>AQI Prediction Results</h1>
+        <p><strong>Predicted AQI:</strong> {{ predicted_aqi }}</p>
+        <p><strong>Air Quality Category:</strong> {{ category }}</p>
+        <p><strong>Advice:</strong> {{ advice }}</p>
+
+        <div id="gauge_chart" style="width: 400px; height: 300px; margin: 20px auto;"></div>
+        <h3><strong>Precaution:</strong> <span style="color: red;">{{ advice }}</span></h3>
+
+
+        <a href="{{ url_for('home') }}" class="button">Back to Home</a>
+    </div>
+</body>
+</html>

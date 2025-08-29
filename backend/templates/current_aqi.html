@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Current AQI</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.1/dist/echarts.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        .left-container {
+            width: 30%;
+            padding: 20px;
+        }
+        .right-container {
+            width: 65%;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        .chart-box {
+            width: 45%;
+            height: 300px;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="left-container">
+        <h1>Current AQI</h1>
+        <form method="POST">
+            <input type="text" name="city" placeholder="Enter city name" required>
+            <button type="submit">Get AQI</button>
+        </form>
+
+        {% if aqi_data %}
+            <h2>AQI for {{ aqi_data.city }}</h2>
+            <p><strong>AQI Value:</strong> {{ aqi_data.aqi }} ({{ aqi_data.category }})</p>
+            <p><strong>PM2.5:</strong> {{ aqi_data.pm25 }}</p>
+            <p><strong>PM10:</strong> {{ aqi_data.pm10 }}</p>
+            <p><strong>CO:</strong> {{ aqi_data.co }}</p>
+            <p><strong>NO2:</strong> {{ aqi_data.no2 }}</p>
+            <p><strong>SO2:</strong> {{ aqi_data.so2 }}</p>
+        {% endif %}
+    </div>
+
+    <div class="right-container">
+        {% if aqi_data %}
+            <div class="chart-container">
+                <div id="gaugeChart" class="chart-box"></div>
+                <div id="barChart" class="chart-box"></div>
+                <div id="lineChart" class="chart-box"></div>
+                <div id="pieChart" class="chart-box"></div>
+            </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    var aqiValue = {{ aqi_data.aqi }};
+                    var pollutants = {
+                        PM25: {{ aqi_data.pm25 }},
+                        PM10: {{ aqi_data.pm10 }},
+                        CO: {{ aqi_data.co }},
+                        NO2: {{ aqi_data.no2 }},
+                        SO2: {{ aqi_data.so2 }}
+                    };
+
+                    // 🏆 AQI Gauge Chart
+                    var gaugeChart = echarts.init(document.getElementById('gaugeChart'));
+                    gaugeChart.setOption({
+                        series: [{
+                            type: 'gauge',
+                            min: 0,
+                            max: 500,
+                            progress: { show: true },
+                            detail: { formatter: '{value}' },
+                            data: [{ value: aqiValue, name: "AQI" }],
+                            axisLine: {
+                                lineStyle: {
+                                    color: [
+                                        [0.1, 'green'], 
+                                        [0.2, 'yellow'], 
+                                        [0.4, 'orange'], 
+                                        [0.6, 'red'], 
+                                        [0.8, 'purple'], 
+                                        [1, 'maroon']
+                                    ],
+                                    width: 15
+                                }
+                            }
+                        }]
+                    });
+
+                    // 📊 Pollutant Bar Chart
+                    var barChart = echarts.init(document.getElementById('barChart'));
+                    barChart.setOption({
+                        title: { text: "Pollutant Levels (µg/m³)" },
+                        xAxis: { type: 'category', data: Object.keys(pollutants) },
+                        yAxis: { type: 'value' },
+                        series: [{
+                            data: Object.values(pollutants),
+                            type: 'bar',
+                            itemStyle: { color: '#007bff' }
+                        }]
+                    });
+
+                    // 📈 AQI Trend Line Graph (Mock Data)
+                    var lineChart = echarts.init(document.getElementById('lineChart'));
+                    lineChart.setOption({
+                        title: { text: "AQI Trend Over Last 7 Days" },
+                        xAxis: { type: 'category', data: ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Today"] },
+                        yAxis: { type: 'value' },
+                        series: [{
+                            data: [{{ aqi_data.aqi - 15 }}, {{ aqi_data.aqi - 10 }}, {{ aqi_data.aqi - 5 }}, {{ aqi_data.aqi - 7 }}, {{ aqi_data.aqi - 3 }}, {{ aqi_data.aqi }}, {{ aqi_data.aqi + 5 }}],
+                            type: 'line',
+                            smooth: true,
+                            itemStyle: { color: '#ff5722' }
+                        }]
+                    });
+
+                    // 🍰 Pollutant Contribution Pie Chart
+                    var totalPollutants = Object.values(pollutants).reduce((a, b) => a + b, 0);
+                    var pieData = Object.keys(pollutants).map(key => ({
+                        name: key,
+                        value: pollutants[key]
+                    }));
+
+                    var pieChart = echarts.init(document.getElementById('pieChart'));
+                    pieChart.setOption({
+                        title: { text: "Pollutant Contribution (%)" },
+                        series: [{
+                            type: 'pie',
+                            radius: '50%',
+                            data: pieData,
+                            label: {
+                                formatter: '{b}: {d}%'
+                            }
+                        }]
+                    });
+                });
+            </script>
+        {% endif %}
+    </div>
+
+</body>
+</html>

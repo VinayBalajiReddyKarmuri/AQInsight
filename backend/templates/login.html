@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AQInsight</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login_styles.css') }}">
+</head>
+<body>
+    <!-- Login Form -->
+    <div class="container">
+        <h2>AQInsight</h2>
+        <form id="loginForm" action="{{ url_for('login') }}" method="POST">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Login</button>
+        </form>
+        <p id="message">{{ message }}</p>
+    </div>
+
+    <script>
+        // Optional JavaScript validation (if you want to keep it)
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === "admin" && password === "password") {
+                window.location.href = '/home';  // Redirect to home on successful login
+            } else {
+                document.getElementById('message').innerText = 'Invalid username or password.';
+            }
+        });
+    </script>
+</body>
+</html>

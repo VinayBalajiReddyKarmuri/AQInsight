@@ -1,0 +1,68 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: url('../static/images/beautiful.gif') no-repeat center center fixed;
+    background-size: cover; /* This makes the background cover the entire page */
+}
+
+.container {
+    background: rgba(0, 0, 0, 0.7); /* Semi-transparent black background for better contrast */
+    padding: 30px; /* Increased padding for a more spacious feel */
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    width: 350px; /* Set width for the login form */
+}
+
+h2 {
+    text-align: center;
+    color: #ffffff; /* Ensures the heading is visible */
+    margin-bottom: 20px; /* Space below the heading */
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #ffffff; /* Label color for better visibility */
+}
+
+input {
+    width: 95%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.8); /* White border for input fields */
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.2); /* Slightly transparent white background */
+    color: #ffffff; /* Input text color */
+}
+
+input::placeholder {
+    color: rgba(255, 255, 255, 0.7); /* Placeholder text color */
+}
+
+button {
+    width: 100%;
+    padding: 12px; /* Increased padding for buttons */
+    border: none;
+    background-color: #007bff; /* Button color */
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px; /* Increased font size for readability */
+    transition: background-color 0.3s, transform 0.3s; /* Added transition for button hover */
+}
+
+button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+    transform: scale(1.05); /* Slight scale effect on hover */
+}
+
+#message {
+    margin-top: 15px; /* Space above the message */
+    color: #ffc107; /* Warning color for messages */
+    font-size: 14px; /* Adjusted font size for the message */
+    text-align: center; /* Centered text for message */
+}
